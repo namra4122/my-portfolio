@@ -65,7 +65,6 @@ function Header() {
 }
 
 function Hero() {
-  const hero_img_path = `/hero_pic_${Math.floor(Math.random() * 5)}.png`;
   return (
     <section className="border-b">
       <div className="mx-auto grid max-w-6xl grid-cols-1 items-center gap-8 px-4 py-12 md:grid-cols-2">
@@ -113,7 +112,7 @@ function Hero() {
         </div>
         <div className="relative">
           <img
-            src={hero_img_path}
+            src={`/hero_pic_${Math.floor(Math.random() * 5)}.png`}
             alt="Profile Picture"
             className="h-auto w-full rounded-lg border bg-muted object-cover aspect-square"
           />
