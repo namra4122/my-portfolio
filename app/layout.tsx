@@ -6,7 +6,6 @@ import { Analytics } from "@vercel/analytics/next"
 export const metadata = {
   title: "Namra Maniar — Portfolio",
   description: "Personal portfolio",
-    generator: 'v0.app'
 }
 
 export default function RootLayout({ children }: { children: ReactNode }) {

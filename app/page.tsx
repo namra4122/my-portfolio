@@ -10,6 +10,7 @@ import Link from "next/link"
 import { ThemeToggle } from "@/components/theme-toggle"
 import { AnchorLink } from "@/components/anchor-link"
 import { SmoothScrollOnHash } from "@/components/smooth-scroll"
+import React from "react"
 
 const XIcon = createLucideIcon("X", [
   [
@@ -65,6 +66,8 @@ function Header() {
 }
 
 function Hero() {
+  const [imgIdx, setImgIdx] = React.useState(() => Math.floor(Math.random() * 5));
+
   return (
     <section className="border-b">
       <div className="mx-auto grid max-w-6xl grid-cols-1 items-center gap-8 px-4 py-12 md:grid-cols-2">
@@ -112,7 +115,7 @@ function Hero() {
         </div>
         <div className="relative">
           <img
-            src={`/hero_pic_${Math.floor(Math.random() * 5)}.png`}
+            src={`/hero_pic_${imgIdx}.png`}
             alt="Profile Picture"
             className="h-auto w-full rounded-lg border bg-muted object-cover aspect-square"
           />
