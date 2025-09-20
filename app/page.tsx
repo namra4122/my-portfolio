@@ -1,5 +1,3 @@
-"use client"
-
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
@@ -66,7 +64,6 @@ function Header() {
 }
 
 function Hero() {
-  const [imgIdx, setImgIdx] = React.useState(() => Math.floor(Math.random() * 5));
 
   return (
     <section className="border-b">
@@ -115,7 +112,7 @@ function Hero() {
         </div>
         <div className="relative">
           <img
-            src={`/hero_pic_${imgIdx}.png`}
+            src="/hero_pic.jpg"
             alt="Profile Picture"
             className="h-auto w-full rounded-lg border bg-muted object-cover aspect-square"
           />

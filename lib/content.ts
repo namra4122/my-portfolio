@@ -50,7 +50,7 @@ export const content: PortfolioContent = {
   education:
     "Vellore Institute of Technology (VIT), Chennai — M.Tech in Software Engineering (Sept 2020 - Apr 2025), CGPA 8.83/10",
   summary:
-    "Backend Software Engineer skilled in Python, Go (Echo), and JavaScript, experienced in building scalable APIs and microservices. Strong background in AWS (EC2, S3, RDS), Docker, and CI/CD; proficient with Postman and familiar with Jenkins. Open‑source contributor passionate about reliable, high‑performance systems and eager to grow in infrastructure‑driven teams.",
+    "Backend Software Engineer skilled in Python, Go, and JavaScript, experienced in building scalable APIs and microservices. Strong background in AWS (EC2, S3, RDS), Docker, and CI/CD; proficient with Postman and familiar with Jenkins. Open‑source contributor passionate about reliable, high‑performance systems and eager to grow in infrastructure‑driven teams.",
   skills: {
     coreStack: ["Python", "Go", "JavaScript", "TypeScript"],
     domains: [
