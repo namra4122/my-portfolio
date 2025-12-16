@@ -17,7 +17,7 @@ function scrollToId(id: string) {
 
 export function AnchorLink({ href, className, children, onNavigated }: AnchorLinkProps) {
   function handleClick(e: React.MouseEvent<HTMLAnchorElement>) {
-    // Only intercept same-page hash anchors
+    // Handle same-page hash anchors
     if (href.startsWith("#")) {
       e.preventDefault()
       const id = href.replace("#", "")
@@ -25,14 +25,15 @@ export function AnchorLink({ href, className, children, onNavigated }: AnchorLin
       history.pushState(null, "", href)
       scrollToId(id)
       onNavigated?.()
-    } else if (href.startsWith("/#")) {
-      // route to root and keep hash
-      // allow default navigation
+    } else {
+      // For external links or different pages, allow default navigation
+      // No need to prevent default - let the browser handle the navigation
+      return true
     }
   }
 
   return (
-    <a href={href} className={className} onClick={handleClick}>
+    <a href={href} className={className} onClick={handleClick} target="_blank">
       {children}
     </a>
   )

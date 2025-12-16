@@ -7,6 +7,7 @@ export type Project = {
   links?: Link[]
 }
 export type Experience = {
+  id: string
   company: string
   role: string
   period: string
@@ -87,12 +88,21 @@ export const content: PortfolioContent = {
   ],
   experience: [
     {
+      id: "optiv-swe",
+      company: "Optiv, Bangalore",
+      role: "Software Engineer",
+      period: "Nov 2025 - Present",
+      summary: "Working on Threat Management Platform, contributing to a centralized system for large-scale security data ingestion, semantic analysis, and continuous monitoring.",
+    },
+    {
+      id: "intervue-swe",
       company: "Intervue.io, Bangalore",
       role: "Software Engineer",
-      period: "Mar 2025 - Present",
+      period: "Mar 2025 - Oct 2025",
       summary: "Cut RAG latency by ~50% via embedding model changes and semantic search tuning; building graph-based conversation flows for a Voice AI agent with event-driven TTS/LLM/STT pipeline; reduced incidents by ~40% through proactive debugging and backend data model improvements; delivered full-stack features across Agile sprints; improved usability with React.js features; added centralized logging & metrics (NewRelic) to improve MTTR.",
     },
     {
+      id: "greenie-intern",
       company: "Greenie Web, Singapore",
       role: "Software Engineering Intern",
       period: "May 2023 - Jul 2023",
@@ -104,14 +114,14 @@ export const content: PortfolioContent = {
     "Team.Shiksha (open-source) — Contributor: onboarding workflows, backend tooling, and DevOps automation for streamlined CI/CD.",
   ],
   links: [
-    { label: "Terminal UI", href: "/terminal" },
+    { label: "Mail", href: "mailto:hey@maniarnamra.com" },
     { label: "LinkedIn", href: "https://www.linkedin.com/in/namra-maniar/" },
     { label: "GitHub", href: "https://github.com/namra4122" },
     { label: "Twitter", href: "https://x.com/ManiarNamra" },
   ],
   blog: [],
   contact: {
-    email: "namra4122@gmail.com",
+    email: "mailto:hey@maniarnamra.com",
     github: "https://github.com/namra4122",
     linkedin: "https://www.linkedin.com/in/namra-maniar",
     twitter: "https://x.com/ManiarNamra"

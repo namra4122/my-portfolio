@@ -34,14 +34,16 @@ export function SearchCommand(props: SearchCommandProps = { open: false, onOpenC
     const down = (e: KeyboardEvent) => {
       if ((e.key.toLowerCase() === "k" && (e.metaKey || e.ctrlKey))) {
         e.preventDefault();
-        setOpen((o) => !o);
-        onOpenChange(!open);
+        setOpen((prev) => {
+          const next = !prev;
+          onOpenChange(next);
+          return next;
+        });
       }
     };
     window.addEventListener("keydown", down);
     return () => window.removeEventListener("keydown", down);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [open]);
+  }, [onOpenChange]);
 
   React.useEffect(() => {
     setResults(query ? searchContent(query) : []);
@@ -51,8 +53,6 @@ export function SearchCommand(props: SearchCommandProps = { open: false, onOpenC
     if (typeof window !== "undefined") {
       setIsMac(navigator.userAgent.includes("Mac"));
     }
-
-    setIsMac(false);
   }, []);
 
   function goto(res: SearchResult) {
