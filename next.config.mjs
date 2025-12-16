@@ -9,13 +9,18 @@ const securityHeaders = [
     value:
       "geolocation=(), microphone=(), camera=(), payment=(), usb=(), interest-cohort=()",
   },
-  // Minimal CSP (adjust as you add external assets)
+  // Comprehensive CSP for Next.js with Vercel Analytics
   {
     key: "Content-Security-Policy",
     value: [
-      "img-src 'self' data:",
-      "base-uri 'self'",
+      "default-src 'self'",
+      "script-src 'self' 'unsafe-inline' 'unsafe-eval' https://vercel.live https://va.vercel-scripts.com",
+      "style-src 'self' 'unsafe-inline'",
+      "img-src 'self' data: blob:",
+      "font-src 'self'",
+      "connect-src 'self' https://vitals.vercel-insights.com https://va.vercel-scripts.com",
       "frame-ancestors 'none'",
+      "base-uri 'self'",
       "object-src 'none'",
     ].join("; "),
   },

@@ -133,6 +133,8 @@ const ALL_COMMANDS = [...BASE_COMMANDS, ...SECTION_COMMANDS]
 
 const SEPARATOR = "───────────────────────────────────────────────────────────────────────────────"
 
+const HISTORY_MAX_LENGTH = 500
+
 export default function BackendTerminalPage() {
   const [fs] = React.useState<FSNode>(() => buildFS())
   const [cwd, setCwd] = React.useState<string[]>([])
@@ -143,6 +145,14 @@ export default function BackendTerminalPage() {
   const [searchMode, setSearchMode] = React.useState(false)
   const wrapRef = React.useRef<HTMLDivElement | null>(null)
   const inputRef = React.useRef<HTMLInputElement | null>(null)
+
+  // Helper to add history entries with cap
+  const addHistory = React.useCallback((entry: Entry) => {
+    setHistory((h) => {
+      const next = [...h, entry]
+      return next.length > HISTORY_MAX_LENGTH ? next.slice(-HISTORY_MAX_LENGTH) : next
+    })
+  }, [])
 
   React.useEffect(() => {
     const onKey = (e: KeyboardEvent) => {
@@ -548,7 +558,7 @@ export default function BackendTerminalPage() {
 
         <div
           ref={wrapRef}
-          className="h-[90vh] w-full overflow-auto rounded-lg border border-emerald-700/40 bg-black p-4 font-mono text-[13px] leading-relaxed text-emerald-400 shadow-inner outline outline-emerald-900/30"
+          className="h-[calc(100dvh-120px)] min-h-[400px] w-full overflow-auto rounded-lg border border-emerald-700/40 bg-black p-4 font-mono text-[13px] leading-relaxed text-emerald-400 shadow-inner outline outline-emerald-900/30"
           style={{ fontFamily: '"Inconsolata", "Fira Code", ui-monospace, monospace' }}
           aria-label="Terminal window"
           role="region"

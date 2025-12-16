@@ -3,11 +3,13 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
 import { content } from "@/lib/content"
 import { SearchCommand } from "@/components/search-command"
-import { ArrowRight, Github, Linkedin, Terminal, createLucideIcon } from "lucide-react"
+import { ArrowRight, Github, Linkedin, Mail, Terminal, createLucideIcon } from "lucide-react"
 import Link from "next/link"
+import Image from "next/image"
 import { ThemeToggle } from "@/components/theme-toggle"
 import { AnchorLink } from "@/components/anchor-link"
 import { SmoothScrollOnHash } from "@/components/smooth-scroll"
+import { MobileNav } from "@/components/mobile-nav"
 import React from "react"
 
 const XIcon = createLucideIcon("X", [
@@ -23,7 +25,7 @@ const XIcon = createLucideIcon("X", [
 
 export default function HomePage() {
   return (
-    <main className="min-h-screen">
+    <main id="main-content" className="min-h-screen">
       <SmoothScrollOnHash />
       <Header />
       <Hero />
@@ -40,7 +42,11 @@ function Header() {
         <Link href="/" className="font-semibold">
           {content.fullName}
         </Link>
+        <MobileNav />
         <nav className="hidden items-center gap-5 text-sm sm:flex">
+          <AnchorLink href="https://drive.google.com/file/d/1kkdAOZrXZDhKif74kB_RprT025rLfA0C/view?usp=sharing" className="text-muted-foreground hover:text-foreground">
+            Resume
+          </AnchorLink>
           <AnchorLink href="#experience" className="text-muted-foreground hover:text-foreground">
             Experience
           </AnchorLink>
@@ -85,6 +91,14 @@ function Hero() {
           </div>
           <div className="mt-6 flex items-center gap-4 text-sm">
             <a
+              href={content.contact.email || "#"}
+              target="_blank"
+              className="inline-flex items-center gap-2 text-muted-foreground hover:text-foreground"
+              rel="noopener noreferrer"
+            >
+              <Mail className="h-4 w-4" /> Mail
+            </a>
+            <a
               href={content.contact.github || "#"}
               target="_blank"
               className="inline-flex items-center gap-2 text-muted-foreground hover:text-foreground"
@@ -110,11 +124,14 @@ function Hero() {
             </a>
           </div>
         </div>
-        <div className="relative">
-          <img
-            src="/hero_pic.jpg"
-            alt="Profile Picture"
-            className="h-auto w-full rounded-lg border bg-muted object-cover aspect-square"
+        <div className="relative aspect-square overflow-hidden rounded-lg border bg-muted">
+          <Image
+            src="/hero_pic_3.png"
+            alt="Namra Maniar - Backend Engineer"
+            fill
+            sizes="(max-width: 768px) 100vw, 50vw"
+            className="object-cover"
+            priority
           />
         </div>
       </div>
@@ -132,8 +149,8 @@ function Sections() {
             <CardTitle>Experience</CardTitle>
           </CardHeader>
           <CardContent className="grid grid-cols-1 gap-4 md:grid-cols-2">
-            {content.experience.map((e, i) => (
-              <div key={i} className="rounded-lg border p-4">
+            {content.experience.map((e) => (
+              <div key={e.id} className="rounded-lg border p-4">
                 <div className="flex items-center justify-between">
                   <div>
                     <p className="font-medium">{e.role}</p>
