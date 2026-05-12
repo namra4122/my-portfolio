@@ -37,6 +37,8 @@ export type PortfolioContent = {
   links: Link[]
   blog: BlogPost[]
   contact: {
+    phone?: string
+    location?: string
     email?: string
     website?: string
     github?: string
@@ -49,9 +51,9 @@ export type PortfolioContent = {
 export const content: PortfolioContent = {
   fullName: "Namra Maniar",
   education:
-    "Vellore Institute of Technology (VIT), Chennai — M.Tech in Software Engineering (Sept 2020 - Apr 2025), CGPA 8.83/10",
+    "Integrated M.Tech in Software Engineering (5-year programme) — Vellore Institute of Technology, Chennai (Sept 2020 – Apr 2025). Coursework: Operating Systems, Computer Networks, Data Structures & Algorithms, Database Design, Software Architecture, Cloud Computing",
   summary:
-    "Backend Software Engineer skilled in Python, Go, and JavaScript, experienced in building scalable APIs and microservices. Strong background in AWS (EC2, S3, RDS), Docker, and CI/CD; proficient with Postman and familiar with Jenkins. Open‑source contributor passionate about reliable, high‑performance systems and eager to grow in infrastructure‑driven teams.",
+    "Software engineer focused on backend systems and automation, with experience in security data pipelines and microservices. Skilled in containerization, observability, and CI/CD. At Optiv, working on large-scale security data ingestion, integrity monitoring, and executive-level analysis. Proficient in Python and Go, with strong system design and reliability fundamentals.",
   skills: {
     coreStack: ["Python", "Go", "JavaScript", "TypeScript"],
     domains: [
@@ -74,15 +76,17 @@ export const content: PortfolioContent = {
     {
       id: "local-rag-chatbot",
       title: "Local RAG Chatbot",
-      description: "Offline Retrieval-Augmented Generation system with a CLI interface for low-latency environments. Tuned vector retrieval and generation pipelines, leveraging caching for performance gains.",
-      technologies: ["Python", "Transformers", "Redis", "CLI"],
+      description:
+        "Built an offline retrieval-augmented-generation pipeline optimized for latency-sensitive environments. Selected HNSW approximate nearest-neighbour indexing over brute-force search, reducing retrieval time to under 50 ms at scale while keeping memory footprint low. Containerised components with Redis caching for O(1) repeated-query lookups; designed for secure, offline operation with no external API dependencies.",
+      technologies: ["Python", "Hugging Face Transformers", "Redis", "Docker", "FAISS", "HNSW", "CLI"],
       links: [{ label: "GitHub", href: "https://github.com/namra4122/cli_docDost" }],
     },
     {
       id: "version-set-manager",
       title: "Version Set Manager",
-      description: "Role-based academic submission platform with secure JWT authentication for students, faculty, and admins. Integrated Cloudinary + Multer to handle large media/code uploads with optimized storage.",
-      technologies: ["Node.js", "Express.js", "MongoDB", "Cloudinary", "JWT"],
+      description:
+        "Developed a scalable academic submission platform with role-based access control, background job processing for large-file uploads, and JWT-based authentication. Selected MongoDB's document model over relational schemas to support flexible versioned submission records, and architected a container-friendly, horizontally scalable system for high-throughput use cases.",
+      technologies: ["Node.js", "Express.js", "MongoDB", "Cloudinary", "JWT", "Docker"],
       links: [{ label: "GitHub", href: "https://github.com/namra4122/Version-Set-Manager" }],
     },
   ],
@@ -92,26 +96,30 @@ export const content: PortfolioContent = {
       company: "Optiv, Bangalore",
       role: "Software Engineer",
       period: "Nov 2025 - Present",
-      summary: "Working on Threat Management Platform, contributing to a centralized system for large-scale security data ingestion, semantic analysis, and continuous monitoring.",
+      summary:
+        "Contribute to a centralized, high-throughput Threat Management Platform for managing client findings and generating reports across multiple security assessments. Designed and developed an internal SDK to standardize platform integrations, reducing new use-case development time by 75% and enabling automation across 15+ integrations. Built ingestion service components with reliability-focused design, including event ordering, idempotent processing, and dead-letter handling to minimize data loss in high-volume systems.",
     },
     {
       id: "intervue-swe",
       company: "Intervue.io, Bangalore",
-      role: "Software Engineer",
+      role: "SDE & AI Intern",
       period: "Mar 2025 - Oct 2025",
-      summary: "Cut RAG latency by ~50% via embedding model changes and semantic search tuning; building graph-based conversation flows for a Voice AI agent with event-driven TTS/LLM/STT pipeline; reduced incidents by ~40% through proactive debugging and backend data model improvements; delivered full-stack features across Agile sprints; improved usability with React.js features; added centralized logging & metrics (NewRelic) to improve MTTR.",
+      summary:
+        "Reduced RAG pipeline latency by 50% by optimizing embedding models and tuning search patterns, improving real-time candidate analysis throughput. Built containerized microservices for a Voice AI agent (STT → LLM → TTS), designing a graph-based conversation state machine for context-aware interactions and deterministic flow control. Collaborated with system architects to refactor backend modules and data models, reducing critical production incidents by 40% through improved consistency and fault isolation.",
     },
     {
       id: "greenie-intern",
       company: "Greenie Web, Singapore",
       role: "Software Engineering Intern",
       period: "May 2023 - Jul 2023",
-      summary: "Improved backend performance by ~25% via regex-based refactors and Postgres/MySQL query optimizations; stabilized APIs with robust error handling; automated QA by integrating Python scripts with Excel to accelerate bug triage.",
+      summary:
+        "Improved backend performance by ~25% via regex-based refactors and Postgres/MySQL query optimizations; stabilized APIs with robust error handling; automated QA by integrating Python scripts with Excel to accelerate bug triage.",
     },
   ],
   learning: [],
   contributions: [
-    "Team.Shiksha (open-source) — Contributor: onboarding workflows, backend tooling, and DevOps automation for streamlined CI/CD.",
+    "Team.Shiksha (open-source) — Multi-tenant Merchandise E-commerce Platform: Building the Go backend for a community-run e-commerce platform supporting multiple tenants. Designing service boundaries, tenant isolation logic, and API contracts for concurrent store operations.",
+    "Team.Shiksha (open-source) — Community Website - Contributor Onboarding Module: Developed a Python-based backend module for the community's main website to streamline contributor onboarding; built the data models, API endpoints, and onboarding workflow logic to reduce friction for new developers joining the community.",
   ],
   links: [
     { label: "Mail", href: "mailto:hey@maniarnamra.com" },
@@ -121,9 +129,12 @@ export const content: PortfolioContent = {
   ],
   blog: [],
   contact: {
+    phone: "+91-6353779926",
+    location: "Bangalore, India",
     email: "mailto:hey@maniarnamra.com",
+    website: "https://maniarnamra.com",
     github: "https://github.com/namra4122",
     linkedin: "https://www.linkedin.com/in/namra-maniar",
-    twitter: "https://x.com/ManiarNamra"
+    twitter: "https://x.com/ManiarNamra",
   },
 }

@@ -24,7 +24,8 @@ function buildFS(): FSNode {
         type: "file",
         name: "about.txt",
         read: () =>
-          `${content.fullName}\n${content.education}\n\n${content.summary}\n\nLearning:\n- ${(content.learning || []).join("\n- ")}`,
+          `${content.fullName}\nEducation: ${content.education}\n\nSummary: ${content.summary}\n${(content.learning?.length > 0) ? `\nLearning:\n- ${content.learning.join("\n- ")}` : ""}`,
+        //`${content.fullName}\nEducation: ${content.education}\n\nSummary: ${content.summary}\n${(content.learning?.length > 0) ? `\nLearning:\n- ${content.learning.join("\n- ")}` : ""
       },
     },
   }
@@ -121,6 +122,19 @@ function buildFS(): FSNode {
     },
   }
 
+  root.children!["contributions"] = {
+    type: "dir",
+    name: "contributions",
+    children: {
+      "contributions.txt": {
+        type: "file",
+        name: "contributions.txt",
+        read: () =>
+          (content.contributions || []).map((c, i) => `${i + 1}. ${c}`).join("\n\n") || "No contributions.",
+      },
+    },
+  }
+
   return root
 }
 
@@ -128,7 +142,7 @@ type Entry = { type: "input" | "output" | "system"; text: string }
 
 // Known commands and direct section commands
 const BASE_COMMANDS = ["help", "clear", "ls", "l", "cd", "cat", "open", "search"]
-const SECTION_COMMANDS = ["about", "projects", "skills", "experience", "contact", "blog", "links"]
+const SECTION_COMMANDS = ["about", "projects", "skills", "experience", "contact", "blog", "links", "contributions"]
 const ALL_COMMANDS = [...BASE_COMMANDS, ...SECTION_COMMANDS]
 
 const SEPARATOR = "───────────────────────────────────────────────────────────────────────────────"
@@ -260,7 +274,7 @@ export default function BackendTerminalPage() {
             text:
               "Commands:\n" +
               "  ls                       List directories/files\n" +
-              "  cd <section|..>          Change directory (about, projects, skills, contact, blog, links)\n" +
+              "  cd <section|..>          Change directory (about, projects, skills, contact, blog, links, contributions)\n" +
               "  cat <file>               View file content (e.g., cat about.txt)\n" +
               "  open <url|#section|section>\n" +
               "                           Open external URL or navigate to Bento section (e.g., open #projects)\n" +
@@ -268,7 +282,7 @@ export default function BackendTerminalPage() {
               "  clear                    Clear screen\n" +
               "  help                     Show this help\n" +
               "\nDirect section commands:\n" +
-              "  about | projects | skills | experience | contact | blog | links\n" +
+              "  about | projects | skills | experience | contact | blog | links | contributions\n" +
               "                          Print that section content without cd/cat\n" +
               "\nFeatures:\n" +
               "  Tab completion           Auto-complete commands, cd targets, and file names\n" +
@@ -396,7 +410,7 @@ export default function BackendTerminalPage() {
   function renderSection(section: string): string {
     switch (section) {
       case "about":
-        return `${content.fullName}\n${content.education}\n\n${content.summary}\n${(content.learning?.length || 0) > 0 ? `\nLearning:\n- ${content.learning.join("\n- ")}` : ""
+        return `${content.fullName}\nEducation: ${content.education}\n\nSummary: ${content.summary}\n${(content.learning?.length > 0) ? `\nLearning:\n- ${content.learning.join("\n- ")}` : ""
           }`
       case "projects":
         return (
@@ -431,6 +445,12 @@ export default function BackendTerminalPage() {
         )
       case "links":
         return (content.links || []).map((l) => `- ${l.label}: ${l.href}`).join("\n") || "No links."
+      case "contributions":
+        return (
+          (content.contributions || [])
+            .map((c, i) => `${i + 1}. ${c}`)
+            .join("\n\n") || "No contributions."
+        )
       default:
         return "Unknown section."
     }
