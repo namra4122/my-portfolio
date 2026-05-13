@@ -36,10 +36,6 @@ export const metadata: Metadata = {
   ],
   authors: [{ name: "Namra Maniar" }],
   creator: "Namra Maniar",
-  icons: {
-    icon: "/favicon.ico",
-    shortcut: "/favicon.ico",
-  },
   openGraph: {
     title: "Namra Maniar",
     description:

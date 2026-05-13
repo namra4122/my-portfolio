@@ -131,7 +131,7 @@ export const content: PortfolioContent = {
   contact: {
     phone: "+91-6353779926",
     location: "Bangalore, India",
-    email: "mailto:hey@maniarnamra.com",
+    email: "hey@maniarnamra.com",
     website: "https://maniarnamra.com",
     github: "https://github.com/namra4122",
     linkedin: "https://www.linkedin.com/in/namra-maniar",
