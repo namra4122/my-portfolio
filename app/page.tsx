@@ -3,7 +3,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
 import { content } from "@/lib/content"
 import { SearchCommand } from "@/components/search-command"
-import { ArrowRight, Github, Linkedin, Mail, Terminal, createLucideIcon } from "lucide-react"
+import { ArrowRight, Github, Linkedin, Mail, MapPin, Phone, Terminal, createLucideIcon } from "lucide-react"
 import Link from "next/link"
 import Image from "next/image"
 import { ThemeToggle } from "@/components/theme-toggle"
@@ -37,14 +37,14 @@ export default function HomePage() {
 
 function Header() {
   return (
-    <header className="sticky top-0 z-40 w-full border-b bg-background/60 backdrop-blur supports-[backdrop-filter]:bg-background/80">
+    <header className="sticky top-0 z-40 w-full border-b bg-background/60 backdrop-blur supports-backdrop-filter:bg-background/80">
       <div className="mx-auto flex max-w-6xl items-center justify-between px-4 py-3">
         <Link href="/" className="font-semibold">
           {content.fullName}
         </Link>
         <MobileNav />
         <nav className="hidden items-center gap-5 text-sm sm:flex">
-          <AnchorLink href="https://drive.google.com/file/d/1kkdAOZrXZDhKif74kB_RprT025rLfA0C/view?usp=sharing" className="text-muted-foreground hover:text-foreground">
+          <AnchorLink href="https://drive.google.com/file/d/18VrVOGwgkuFtzb998CVaNY_Gk54xQEPw/view" className="text-muted-foreground hover:text-foreground">
             Resume
           </AnchorLink>
           <AnchorLink href="#experience" className="text-muted-foreground hover:text-foreground">
@@ -55,6 +55,9 @@ function Header() {
           </AnchorLink>
           <AnchorLink href="#projects" className="text-muted-foreground hover:text-foreground">
             Projects
+          </AnchorLink>
+          <AnchorLink href="#open-source" className="text-muted-foreground hover:text-foreground">
+            Open Source
           </AnchorLink>
           <Link href="/terminal" className="inline-flex items-center gap-1 text-emerald-600 hover:text-emerald-700">
             <Terminal className="h-4 w-4" /> Terminal
@@ -89,7 +92,20 @@ function Hero() {
               </Link>
             </Button>
           </div>
-          <div className="mt-6 flex items-center gap-4 text-sm">
+          <div className="mt-6 flex flex-wrap items-center gap-4 text-sm">
+            {content.contact.phone && (
+              <a
+                href={`tel:${content.contact.phone}`}
+                className="inline-flex items-center gap-2 text-muted-foreground hover:text-foreground"
+              >
+                <Phone className="h-4 w-4" /> {content.contact.phone}
+              </a>
+            )}
+            {content.contact.location && (
+              <span className="inline-flex items-center gap-2 text-muted-foreground">
+                <MapPin className="h-4 w-4" /> {content.contact.location}
+              </span>
+            )}
             <a
               href={content.contact.email || "#"}
               target="_blank"
@@ -209,6 +225,41 @@ function Sections() {
                 </div>
               </div>
             ))}
+          </CardContent>
+        </Card>
+
+        <div id="open-source" className="scroll-mt-24 md:col-span-3" />
+        <Card className="md:col-span-3">
+          <CardHeader>
+            <CardTitle>Open Source</CardTitle>
+          </CardHeader>
+          <CardContent className="space-y-4">
+            <a
+              href="https://github.com/TeamShiksha"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="block rounded-lg border p-4 transition-colors hover:bg-muted/50"
+            >
+              <div className="mb-1 flex items-center justify-between">
+                <h3 className="font-medium">Team.Shiksha</h3>
+                <span className="text-xs text-emerald-700 hover:underline">GitHub →</span>
+              </div>
+              <div className="space-y-3 text-sm text-muted-foreground">
+                <p>
+                  <strong>Multi-tenant Merchandise E-commerce Platform:</strong> Building the Go backend for a community-run e-commerce platform supporting multiple tenants. Designing service boundaries, tenant isolation logic, and API contracts for concurrent store operations.
+                </p>
+                <p>
+                  <strong>Community Website — Contributor Onboarding Module:</strong> Developed a Python-based backend module for the community&apos;s main website to streamline contributor onboarding; built the data models, API endpoints, and onboarding workflow logic to reduce friction for new developers joining the community.
+                </p>
+              </div>
+              <div className="mt-3 flex flex-wrap gap-1.5">
+                {["Go", "Python", "Multi-tenancy", "REST APIs", "DevOps"].map((t) => (
+                  <Badge key={t} variant="outline">
+                    {t}
+                  </Badge>
+                ))}
+              </div>
+            </a>
           </CardContent>
         </Card>
       </div>

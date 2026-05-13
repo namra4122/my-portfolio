@@ -7,10 +7,11 @@ import { Button } from "@/components/ui/button"
 import { AnchorLink } from "@/components/anchor-link"
 
 const navItems = [
-    { href: "https://drive.google.com/file/d/1kkdAOZrXZDhKif74kB_RprT025rLfA0C/view?usp=sharing", label: "Resume", external: true },
+    { href: "/cv.html", label: "Resume", external: false },
     { href: "#experience", label: "Experience" },
     { href: "#skills", label: "Skills" },
     { href: "#projects", label: "Projects" },
+    { href: "#open-source", label: "Open Source" },
 ]
 
 export function MobileNav() {

@@ -7,9 +7,9 @@ import { GeistSans } from "geist/font/sans"
 import { GeistMono } from "geist/font/mono"
 
 export const metadata: Metadata = {
-  title: "Namra Maniar — Backend Engineer",
+  title: "Namra Maniar",
   description:
-    "Backend Software Engineer skilled in Python, Go, and JavaScript. Building scalable APIs and microservices with AWS, Docker, and CI/CD.",
+    "Software engineer focused on backend systems, automation, and security data pipelines. Experienced in Python, Go, microservices, containerization, observability, and CI/CD. Building reliable, high-performance systems at Optiv.",
   keywords: [
     "backend engineer",
     "software engineer",
@@ -21,13 +21,25 @@ export const metadata: Metadata = {
     "microservices",
     "APIs",
     "Docker",
+    "Kubernetes",
+    "security",
+    "observability",
+    "CI/CD",
+    "RAG",
+    "LLMs",
+    "FastAPI",
+    "Echo",
+    "Node.js",
+    "Redis",
+    "PostgreSQL",
+    "MongoDB",
   ],
   authors: [{ name: "Namra Maniar" }],
   creator: "Namra Maniar",
   openGraph: {
-    title: "Namra Maniar — Backend Engineer",
+    title: "Namra Maniar",
     description:
-      "Backend Software Engineer building scalable APIs and microservices",
+      "Software engineer focused on backend systems, automation, and security data pipelines. Experienced in Python, Go, microservices, containerization, observability, and CI/CD.",
     url: "https://maniarnamra.com",
     siteName: "Namra Maniar Portfolio",
     type: "website",
@@ -37,7 +49,7 @@ export const metadata: Metadata = {
         url: "/hero_pic_3.png",
         width: 1200,
         height: 630,
-        alt: "Namra Maniar - Backend Engineer",
+        alt: "Namra Maniar - Backend Software Engineer",
       },
     ],
   },
@@ -45,9 +57,9 @@ export const metadata: Metadata = {
     card: "summary_large_image",
     site: "@ManiarNamra",
     creator: "@ManiarNamra",
-    title: "Namra Maniar — Backend Engineer",
+    title: "Namra Maniar",
     description:
-      "Backend Software Engineer building scalable APIs and microservices",
+      "Software engineer focused on backend systems, automation, and security data pipelines.",
     images: ["/hero_pic_3.png"],
   },
   robots: {
@@ -78,7 +90,26 @@ const jsonLd = {
     "https://x.com/ManiarNamra",
   ],
   email: "mailto:hey@maniarnamra.com",
-  knowsAbout: ["Python", "Go", "JavaScript", "AWS", "Microservices", "Docker"],
+  knowsAbout: [
+    "Python",
+    "Go",
+    "JavaScript",
+    "TypeScript",
+    "AWS",
+    "Microservices",
+    "Docker",
+    "Kubernetes",
+    "Security Data Pipelines",
+    "Observability",
+    "CI/CD",
+    "RAG",
+    "LLMs",
+    "FastAPI",
+    "Echo",
+    "Redis",
+    "PostgreSQL",
+    "MongoDB",
+  ],
 }
 
 export default function RootLayout({ children }: { children: ReactNode }) {
@@ -88,13 +119,14 @@ export default function RootLayout({ children }: { children: ReactNode }) {
       className={`${GeistSans.variable} ${GeistMono.variable}`}
       suppressHydrationWarning
     >
-      <head>
+      <body
+        className="min-h-screen bg-background font-sans text-foreground antialiased"
+        suppressHydrationWarning
+      >
         <script
           type="application/ld+json"
           dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
         />
-      </head>
-      <body className="min-h-screen bg-background font-sans text-foreground antialiased">
         <a
           href="#main-content"
           className="sr-only focus:not-sr-only focus:absolute focus:left-4 focus:top-4 focus:z-50 focus:rounded focus:bg-background focus:px-4 focus:py-2 focus:text-foreground focus:outline focus:outline-2"
