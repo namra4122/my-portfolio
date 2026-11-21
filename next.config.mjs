@@ -27,10 +27,6 @@ const securityHeaders = [
 ]
 
 const nextConfig = {
-  eslint: {
-    // Enforce lint in CI/builds
-    ignoreDuringBuilds: false,
-  },
   typescript: {
     // Fail builds on type errors
     ignoreBuildErrors: false,

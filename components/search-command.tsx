@@ -7,11 +7,6 @@ import { Badge } from "@/components/ui/badge";
 import { ExternalLink, Search } from 'lucide-react';
 import { isHttpUrl, openExternal } from "@/lib/url";
 
-type SearchCommandProps = {
-  open?: boolean;
-  onOpenChange?: (v: boolean) => void;
-};
-
 const SECTION_LABELS: Record<SearchResult["section"], string> = {
   about: "About",
   projects: "Projects",
@@ -24,36 +19,28 @@ const SECTION_LABELS: Record<SearchResult["section"], string> = {
   links: "Links",
 };
 
-export function SearchCommand(props: SearchCommandProps = { open: false, onOpenChange: () => { } }) {
-  const [open, setOpen] = React.useState<boolean>(props.open ?? false);
-  const [query, setQuery] = React.useState("");
-  const [results, setResults] = React.useState<SearchResult[]>([]);
-  const [isMac, setIsMac] = React.useState(false);
+const noopSubscribe = () => () => { };
 
-  const onOpenChange = props.onOpenChange ?? (() => { });
+export function SearchCommand() {
+  const [open, setOpen] = React.useState(false);
+  const [query, setQuery] = React.useState("");
+  const results = React.useMemo(() => (query ? searchContent(query) : []), [query]);
+  // Server render and hydration use the non-Mac label; the client corrects it after.
+  const isMac = React.useSyncExternalStore(
+    noopSubscribe,
+    () => navigator.userAgent.includes("Mac"),
+    () => false,
+  );
+
   React.useEffect(() => {
     const down = (e: KeyboardEvent) => {
-      if ((e.key.toLowerCase() === "k" && (e.metaKey || e.ctrlKey))) {
+      if (e.key.toLowerCase() === "k" && (e.metaKey || e.ctrlKey)) {
         e.preventDefault();
-        setOpen((prev) => {
-          const next = !prev;
-          onOpenChange(next);
-          return next;
-        });
+        setOpen((prev) => !prev);
       }
     };
     window.addEventListener("keydown", down);
     return () => window.removeEventListener("keydown", down);
-  }, [onOpenChange]);
-
-  React.useEffect(() => {
-    setResults(query ? searchContent(query) : []);
-  }, [query]);
-
-  React.useEffect(() => {
-    if (typeof window !== "undefined") {
-      setIsMac(navigator.userAgent.includes("Mac"));
-    }
   }, []);
 
   function goto(res: SearchResult) {
@@ -67,7 +54,6 @@ export function SearchCommand(props: SearchCommandProps = { open: false, onOpenC
       openExternal(href);
     }
     setOpen(false);
-    onOpenChange(false);
   }
 
   const grouped = results.reduce<Record<string, SearchResult[]>>((acc, r) => {
@@ -88,7 +74,7 @@ export function SearchCommand(props: SearchCommandProps = { open: false, onOpenC
         <span className="hidden sm:inline">Search</span>
         <kbd className="ml-3 hidden rounded bg-muted px-1.5 py-0.5 text-[10px] font-mono sm:inline">{isMac ? "⌘" : "Ctrl"}+K</kbd>
       </button>
-      <CommandDialog open={open} onOpenChange={(v) => { setOpen(v); onOpenChange(v); }}>
+      <CommandDialog open={open} onOpenChange={setOpen}>
         <CommandInput value={query} onValueChange={setQuery} placeholder="Search projects, skills, experience, blog..." />
         <CommandList>
           <CommandEmpty>No results found.</CommandEmpty>

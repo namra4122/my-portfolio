@@ -3,7 +3,8 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
 import { content } from "@/lib/content"
 import { SearchCommand } from "@/components/search-command"
-import { ArrowRight, Github, Linkedin, Mail, MapPin, Terminal, createLucideIcon } from "lucide-react"
+import { ArrowRight, Mail, MapPin, Terminal } from "lucide-react"
+import { GithubIcon, LinkedinIcon, XIcon } from "@/components/brand-icons"
 import Link from "next/link"
 import Image from "next/image"
 import { ThemeToggle } from "@/components/theme-toggle"
@@ -11,17 +12,6 @@ import { AnchorLink } from "@/components/anchor-link"
 import { SmoothScrollOnHash } from "@/components/smooth-scroll"
 import { MobileNav } from "@/components/mobile-nav"
 import { isHttpUrl } from "@/lib/url"
-
-const XIcon = createLucideIcon("X", [
-  [
-    "path",
-    {
-      d: "M18.901 1.153h3.68l-8.04 9.19L24 22.846h-7.406l-5.8-7.584-6.638 7.584H.474l8.6-9.83L0 1.154h7.594l5.243 6.932ZM17.61 20.644h2.039L6.486 3.24H4.298Z",
-      stroke: "none",
-      fill: "currentColor",
-    },
-  ],
-]);
 
 export default function HomePage() {
   return (
@@ -73,8 +63,8 @@ function Header() {
 }
 
 const socialLinks = [
-  { label: "GitHub", href: content.contact.github, Icon: Github },
-  { label: "LinkedIn", href: content.contact.linkedin, Icon: Linkedin },
+  { label: "GitHub", href: content.contact.github, Icon: GithubIcon },
+  { label: "LinkedIn", href: content.contact.linkedin, Icon: LinkedinIcon },
   { label: "Twitter", href: content.contact.twitter, Icon: XIcon },
 ].filter((l): l is typeof l & { href: string } => Boolean(l.href))
 

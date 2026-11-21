@@ -1,6 +1,8 @@
 "use client"
 
 import * as React from "react"
+import Link from "next/link"
+import { useRouter } from "next/navigation"
 import { content } from "@/lib/content"
 import { searchContent } from "@/lib/search"
 import { openExternal } from "@/lib/url"
@@ -290,6 +292,7 @@ type CommandContext = {
   appendHistory: (entry: Omit<Entry, "id">) => void
   setSearchMode: React.Dispatch<React.SetStateAction<boolean>>
   activateSearchMode: () => void
+  navigate: (href: string) => void
 }
 
 const COMMANDS: Record<string, (args: string[], ctx: CommandContext) => void> = {
@@ -324,7 +327,7 @@ const COMMANDS: Record<string, (args: string[], ctx: CommandContext) => void> = 
     const out = [...items, ...files].join("\n") || "."
     appendHistory({ type: "output", text: out })
   },
-  open(args, { appendHistory }) {
+  open(args, { appendHistory, navigate }) {
     if (args.length === 0) {
       appendHistory({ type: "output", text: "Usage: open <url|#section|section>" })
       return
@@ -335,7 +338,7 @@ const COMMANDS: Record<string, (args: string[], ctx: CommandContext) => void> = 
 
     if (anchor) {
       appendHistory({ type: "output", text: `Navigating to /#${anchor}` })
-      window.location.assign(`/#${anchor}`)
+      navigate(`/#${anchor}`)
       return
     }
 
@@ -410,6 +413,7 @@ export default function BackendTerminalPage() {
   const wrapRef = React.useRef<HTMLDivElement | null>(null)
   const inputRef = React.useRef<HTMLInputElement | null>(null)
   const idRef = React.useRef(1)
+  const router = useRouter()
 
   const appendHistory = React.useCallback((entry: Omit<Entry, "id">) => {
     setHistory((h) => {
@@ -494,6 +498,7 @@ export default function BackendTerminalPage() {
         appendHistory,
         setSearchMode,
         activateSearchMode,
+        navigate: router.push,
       })
     } else {
       appendHistory({
@@ -592,12 +597,12 @@ export default function BackendTerminalPage() {
         <div className="mb-4 flex items-center justify-between">
           <div className="text-sm text-emerald-300/80">{content.fullName} — Terminal Interface</div>
           <div className="flex items-center gap-2">
-            <a
+            <Link
               href="/"
               className="text-xs text-emerald-300/80 underline decoration-dotted underline-offset-2 hover:text-emerald-200"
             >
               Back to Bento
-            </a>
+            </Link>
           </div>
         </div>
 

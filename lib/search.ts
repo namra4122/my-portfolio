@@ -28,12 +28,6 @@ export function searchContent(query: string, source: PortfolioContent = content)
     return queryWords.every((word) => lower.includes(word))
   }
 
-  // Helper: count how many query words match (for ranking)
-  function matchCount(text: string): number {
-    const lower = text.toLowerCase()
-    return queryWords.filter((word) => lower.includes(word)).length
-  }
-
   // About
   {
     const block = [source.fullName, source.education, source.summary, ...(source.learning || [])]
