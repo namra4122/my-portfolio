@@ -6,6 +6,7 @@ import { searchContent, type SearchResult } from "@/lib/search";
 import { Badge } from "@/components/ui/badge";
 import { ExternalLink, Search } from 'lucide-react';
 import { isHttpUrl, openExternal } from "@/lib/url";
+import { trackEvent } from "@/lib/analytics";
 
 const SECTION_LABELS: Record<SearchResult["section"], string> = {
   about: "About",
@@ -32,11 +33,32 @@ export function SearchCommand() {
     () => false,
   );
 
+  // Analytics: only counts and ids we own are sent, never the query text.
+  // openRef mirrors `open` synchronously so repeated signals (e.g. Escape during
+  // the exit animation) aren't counted as new transitions.
+  const openRef = React.useRef(false);
+  const selectedRef = React.useRef(false);
+
+  function handleOpenChange(next: boolean, method: "keyboard" | "button" = "button") {
+    if (next !== openRef.current) {
+      if (next) {
+        selectedRef.current = false;
+        trackEvent("search_open", { method, surface: "home" });
+      } else if (!selectedRef.current && query.trim()) {
+        trackEvent("search_abandon", { result_count: results.length });
+      }
+    }
+    openRef.current = next;
+    setOpen(next);
+  }
+
+  const onShortcut = React.useEffectEvent(() => handleOpenChange(!openRef.current, "keyboard"));
+
   React.useEffect(() => {
     const down = (e: KeyboardEvent) => {
       if (e.key.toLowerCase() === "k" && (e.metaKey || e.ctrlKey)) {
         e.preventDefault();
-        setOpen((prev) => !prev);
+        onShortcut();
       }
     };
     window.addEventListener("keydown", down);
@@ -44,6 +66,8 @@ export function SearchCommand() {
   }, []);
 
   function goto(res: SearchResult) {
+    selectedRef.current = true;
+    trackEvent("search_select", { section: res.section, result_id: res.id, result_count: results.length });
     const href = res.href;
     if (href?.startsWith("#")) {
       const id = href.slice(1);
@@ -53,7 +77,7 @@ export function SearchCommand() {
       // Only http(s)/mailto are ever opened; anything else is ignored.
       openExternal(href);
     }
-    setOpen(false);
+    handleOpenChange(false);
   }
 
   const grouped = results.reduce<Record<string, SearchResult[]>>((acc, r) => {
@@ -66,7 +90,7 @@ export function SearchCommand() {
     <>
       <button
         type="button"
-        onClick={() => setOpen(true)}
+        onClick={() => handleOpenChange(true, "button")}
         className="inline-flex items-center gap-2 rounded-md border px-3 py-2 text-sm text-muted-foreground hover:text-foreground"
         aria-label="Open search"
       >
@@ -74,7 +98,7 @@ export function SearchCommand() {
         <span className="hidden sm:inline">Search</span>
         <kbd className="ml-3 hidden rounded bg-muted px-1.5 py-0.5 text-[10px] font-mono sm:inline">{isMac ? "⌘" : "Ctrl"}+K</kbd>
       </button>
-      <CommandDialog open={open} onOpenChange={setOpen}>
+      <CommandDialog open={open} onOpenChange={(v) => handleOpenChange(v)}>
         <CommandInput value={query} onValueChange={setQuery} placeholder="Search projects, skills, experience, blog..." />
         <CommandList>
           <CommandEmpty>No results found.</CommandEmpty>

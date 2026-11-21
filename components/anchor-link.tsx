@@ -8,7 +8,9 @@ type AnchorLinkProps = React.PropsWithChildren<{
   href: string
   className?: string
   onNavigated?: () => void
-}>
+}> &
+  // Pass-through attributes (e.g. data-track for analytics). target/rel are derived from href.
+  Omit<React.ComponentPropsWithoutRef<"a">, "href" | "className" | "onClick" | "target" | "rel">
 
 function scrollToId(id: string) {
   const el = document.getElementById(id)
@@ -17,10 +19,11 @@ function scrollToId(id: string) {
   }
 }
 
-export function AnchorLink({ href, className, children, onNavigated }: AnchorLinkProps) {
+export function AnchorLink({ href, className, children, onNavigated, ...rest }: AnchorLinkProps) {
   if (isHttpUrl(href)) {
     return (
       <a
+        {...rest}
         href={href}
         className={className}
         target="_blank"
@@ -42,7 +45,7 @@ export function AnchorLink({ href, className, children, onNavigated }: AnchorLin
   }
 
   return (
-    <a href={href} className={className} onClick={handleClick}>
+    <a {...rest} href={href} className={className} onClick={handleClick}>
       {children}
     </a>
   )

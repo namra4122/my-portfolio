@@ -7,8 +7,8 @@ import { Button } from "@/components/ui/button"
 import { AnchorLink } from "@/components/anchor-link"
 import { content } from "@/lib/content"
 
-const navItems = [
-    { href: content.resumeUrl, label: "Resume" },
+const navItems: { href: string; label: string; track?: string }[] = [
+    { href: content.resumeUrl, label: "Resume", track: "resume" },
     { href: "#experience", label: "Experience" },
     { href: "#skills", label: "Skills" },
     { href: "#projects", label: "Projects" },
@@ -60,12 +60,14 @@ export function MobileNav() {
                         className="fixed inset-x-0 top-[57px] z-50 border-b bg-background p-4"
                         role="navigation"
                         aria-label="Mobile navigation"
+                        data-track-location="mobile_nav"
                     >
                         <ul className="flex flex-col gap-4">
                             {navItems.map((item) => (
                                 <li key={item.href}>
                                     <AnchorLink
                                         href={item.href}
+                                        data-track={item.track}
                                         className="block py-2 text-lg text-muted-foreground hover:text-foreground"
                                         onNavigated={() => setIsOpen(false)}
                                     >
