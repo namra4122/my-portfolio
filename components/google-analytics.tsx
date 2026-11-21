@@ -1,5 +1,4 @@
 import Script from "next/script"
-import { CONSENT_STORAGE_KEY } from "@/lib/analytics"
 import { AnalyticsClickTracker } from "@/components/analytics-click-tracker"
 import { ConsentBanner } from "@/components/consent-banner"
 
@@ -14,7 +13,8 @@ import { ConsentBanner } from "@/components/consent-banner"
  *
  * Consent Mode v2: analytics_storage defaults to denied in the EEA, UK and
  * Switzerland and granted elsewhere; ad storage is denied everywhere (no ads).
- * A stored choice from the banner overrides the default before config runs.
+ * A stored choice (ga_consent cookie on .maniarnamra.com, shared with
+ * sites.maniarnamra.com) overrides the default before config runs.
  */
 
 const GA_ID = process.env.NEXT_PUBLIC_GA_MEASUREMENT_ID?.trim()
@@ -39,7 +39,7 @@ function gtag(){dataLayer.push(arguments);}
 window.gtag=gtag;
 gtag('consent','default',{ad_storage:'denied',ad_user_data:'denied',ad_personalization:'denied',analytics_storage:'denied',region:${JSON.stringify(CONSENT_REQUIRED_REGIONS)},wait_for_update:500});
 gtag('consent','default',{ad_storage:'denied',ad_user_data:'denied',ad_personalization:'denied',analytics_storage:'granted'});
-try{var c=localStorage.getItem(${JSON.stringify(CONSENT_STORAGE_KEY)});if(c==='granted'||c==='denied'){gtag('consent','update',{analytics_storage:c});}}catch(e){}
+var c=document.cookie.match(/(?:^|;\\s*)ga_consent=(granted|denied)/);if(c){gtag('consent','update',{analytics_storage:c[1]});}
 gtag('js',new Date());
 gtag('config',${JSON.stringify(id)});`
 }

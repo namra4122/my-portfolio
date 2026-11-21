@@ -9,7 +9,13 @@
  *   counts belong in params.
  */
 
-export const CONSENT_STORAGE_KEY = "ga-consent"
+/**
+ * Consent is a first-party cookie on .maniarnamra.com (not localStorage) so a
+ * choice made here also applies on sites.maniarnamra.com, which reads the same
+ * cookie in its /assets/ga.js. Both sites share one GA4 stream and _ga cookie.
+ */
+export const CONSENT_COOKIE = "ga_consent"
+const PARENT_DOMAIN = "maniarnamra.com"
 export type ConsentChoice = "granted" | "denied"
 
 export type SocialPlatform = "github" | "linkedin" | "x" | "mail"
@@ -48,23 +54,18 @@ export function trackEvent<E extends keyof AnalyticsEvents>(
 }
 
 export function updateConsent(choice: ConsentChoice): void {
-  try {
-    localStorage.setItem(CONSENT_STORAGE_KEY, choice)
-  } catch {
-    // storage blocked: the choice still applies for this page view
-  }
+  const host = window.location.hostname
+  const domain = host === PARENT_DOMAIN || host.endsWith("." + PARENT_DOMAIN) ? `; Domain=.${PARENT_DOMAIN}` : ""
+  const secure = window.location.protocol === "https:" ? "; Secure" : ""
+  document.cookie = `${CONSENT_COOKIE}=${choice}; Path=/; Max-Age=31536000; SameSite=Lax${domain}${secure}`
   if (!isAnalyticsEnabled()) return
   window.gtag!("consent", "update", { analytics_storage: choice })
   if (choice === "denied") clearGaCookies()
 }
 
 export function readConsent(): ConsentChoice | null {
-  try {
-    const v = localStorage.getItem(CONSENT_STORAGE_KEY)
-    return v === "granted" || v === "denied" ? v : null
-  } catch {
-    return null
-  }
+  const m = document.cookie.match(/(?:^|;\s*)ga_consent=(granted|denied)/)
+  return m ? (m[1] as ConsentChoice) : null
 }
 
 /** Remove _ga / _ga_<stream> cookies set before consent was withdrawn. */
