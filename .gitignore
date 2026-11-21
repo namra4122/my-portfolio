@@ -29,3 +29,6 @@ yarn-error.log*
 # typescript
 *.tsbuildinfo
 next-env.d.ts
+# local design inspiration / experiments and tooling (not part of the site)
+/design-explorations/
+/.impeccable/
