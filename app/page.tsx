@@ -10,6 +10,7 @@ import { ThemeToggle } from "@/components/theme-toggle"
 import { AnchorLink } from "@/components/anchor-link"
 import { SmoothScrollOnHash } from "@/components/smooth-scroll"
 import { MobileNav } from "@/components/mobile-nav"
+import { ConsentPreferencesButton } from "@/components/consent-banner"
 import React from "react"
 
 const XIcon = createLucideIcon("X", [
@@ -37,14 +38,14 @@ export default function HomePage() {
 
 function Header() {
   return (
-    <header className="sticky top-0 z-40 w-full border-b bg-background/60 backdrop-blur supports-backdrop-filter:bg-background/80">
+    <header data-track-location="header" className="sticky top-0 z-40 w-full border-b bg-background/60 backdrop-blur supports-backdrop-filter:bg-background/80">
       <div className="mx-auto flex max-w-6xl items-center justify-between px-4 py-3">
         <Link href="/" className="font-semibold">
           {content.fullName}
         </Link>
         <MobileNav />
         <nav className="hidden items-center gap-5 text-sm sm:flex">
-          <AnchorLink href="https://drive.google.com/file/d/18VrVOGwgkuFtzb998CVaNY_Gk54xQEPw/view" className="text-muted-foreground hover:text-foreground">
+          <AnchorLink href="https://drive.google.com/file/d/18VrVOGwgkuFtzb998CVaNY_Gk54xQEPw/view" data-track="resume" className="text-muted-foreground hover:text-foreground">
             Resume
           </AnchorLink>
           <AnchorLink href="#experience" className="text-muted-foreground hover:text-foreground">
@@ -75,7 +76,7 @@ function Header() {
 function Hero() {
 
   return (
-    <section className="border-b">
+    <section data-track-location="hero" className="border-b">
       <div className="mx-auto grid max-w-6xl grid-cols-1 items-center gap-8 px-4 py-12 md:grid-cols-2">
         <div>
           <h1 className="text-3xl font-semibold tracking-tight md:text-4xl">{content.fullName}</h1>
@@ -107,7 +108,7 @@ function Hero() {
               </span>
             )}
             <a
-              href={content.contact.email || "#"}
+              href={content.contact.email ? `mailto:${content.contact.email}` : "#"}
               target="_blank"
               className="inline-flex items-center gap-2 text-muted-foreground hover:text-foreground"
               rel="noopener noreferrer"
@@ -206,6 +207,9 @@ function Sections() {
                       <a
                         key={l.href}
                         href={l.href}
+                        data-track="project"
+                        data-project-id={p.id}
+                        data-link-label={l.label}
                         target="_blank"
                         rel="noopener noreferrer"
                         className="text-xs text-emerald-700 hover:underline"
@@ -236,6 +240,9 @@ function Sections() {
           <CardContent className="space-y-4">
             <a
               href="https://github.com/TeamShiksha"
+              data-track="project"
+              data-project-id="team-shiksha"
+              data-link-label="GitHub"
               target="_blank"
               rel="noopener noreferrer"
               className="block rounded-lg border p-4 transition-colors hover:bg-muted/50"
@@ -286,7 +293,7 @@ function Row({ label, items }: { label?: string; items?: string[] }) {
 
 function Footer() {
   return (
-    <footer className="border-t">
+    <footer data-track-location="footer" className="border-t">
       <div className="mx-auto flex max-w-6xl items-center justify-between px-4 py-8 text-sm text-muted-foreground">
         <span>
           {"© "}
@@ -304,6 +311,7 @@ function Footer() {
               {l.label}
             </a>
           ))}
+          <ConsentPreferencesButton className="hover:text-foreground" />
         </div>
       </div>
     </footer>

@@ -3,6 +3,7 @@ import type { ReactNode } from "react"
 import type { Metadata, Viewport } from "next"
 import { ThemeProvider } from "@/components/theme-provider"
 import { Analytics } from "@vercel/analytics/next"
+import { GoogleAnalytics } from "@/components/google-analytics"
 import { GeistSans } from "geist/font/sans"
 import { GeistMono } from "geist/font/mono"
 
@@ -123,6 +124,7 @@ export default function RootLayout({ children }: { children: ReactNode }) {
         className="min-h-screen bg-background font-sans text-foreground antialiased"
         suppressHydrationWarning
       >
+        <GoogleAnalytics />
         <script
           type="application/ld+json"
           dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}

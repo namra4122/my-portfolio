@@ -6,8 +6,8 @@ import { Menu, Terminal, X } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { AnchorLink } from "@/components/anchor-link"
 
-const navItems = [
-    { href: "/cv.html", label: "Resume", external: false },
+const navItems: { href: string; label: string; external?: boolean; track?: string }[] = [
+    { href: "/cv.html", label: "Resume", external: false, track: "resume" },
     { href: "#experience", label: "Experience" },
     { href: "#skills", label: "Skills" },
     { href: "#projects", label: "Projects" },
@@ -59,6 +59,7 @@ export function MobileNav() {
                         className="fixed inset-x-0 top-[57px] z-50 border-b bg-background p-4"
                         role="navigation"
                         aria-label="Mobile navigation"
+                        data-track-location="mobile_nav"
                     >
                         <ul className="flex flex-col gap-4">
                             {navItems.map((item) => (
@@ -66,6 +67,7 @@ export function MobileNav() {
                                     {item.external ? (
                                         <a
                                             href={item.href}
+                                            data-track={item.track}
                                             className="block py-2 text-lg text-muted-foreground hover:text-foreground"
                                             target="_blank"
                                             rel="noopener noreferrer"
@@ -76,6 +78,7 @@ export function MobileNav() {
                                     ) : (
                                         <AnchorLink
                                             href={item.href}
+                                            data-track={item.track}
                                             className="block py-2 text-lg text-muted-foreground hover:text-foreground"
                                             onNavigated={() => setIsOpen(false)}
                                         >

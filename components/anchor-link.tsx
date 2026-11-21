@@ -6,7 +6,8 @@ type AnchorLinkProps = React.PropsWithChildren<{
   href: string // expects hash like "#projects" or an absolute path with hash like "/#projects"
   className?: string
   onNavigated?: () => void
-}>
+}> &
+  Omit<React.ComponentPropsWithoutRef<"a">, "href" | "className" | "onClick" | "target">
 
 function scrollToId(id: string) {
   const el = document.getElementById(id)
@@ -15,7 +16,7 @@ function scrollToId(id: string) {
   }
 }
 
-export function AnchorLink({ href, className, children, onNavigated }: AnchorLinkProps) {
+export function AnchorLink({ href, className, children, onNavigated, ...rest }: AnchorLinkProps) {
   function handleClick(e: React.MouseEvent<HTMLAnchorElement>) {
     // Handle same-page hash anchors
     if (href.startsWith("#")) {
@@ -33,7 +34,7 @@ export function AnchorLink({ href, className, children, onNavigated }: AnchorLin
   }
 
   return (
-    <a href={href} className={className} onClick={handleClick} target="_blank">
+    <a {...rest} href={href} className={className} onClick={handleClick} target="_blank">
       {children}
     </a>
   )

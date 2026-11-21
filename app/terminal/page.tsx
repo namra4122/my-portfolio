@@ -3,6 +3,7 @@
 import * as React from "react"
 import { content } from "@/lib/content"
 import { searchContent } from "@/lib/search"
+import { trackEvent } from "@/lib/analytics"
 
 // ── Types ───────────────────────────────────────────────────────────
 type FileNode = {
@@ -414,9 +415,14 @@ export default function BackendTerminalPage() {
   }, [])
 
   React.useEffect(() => {
+    trackEvent("terminal_open")
+  }, [])
+
+  React.useEffect(() => {
     const onKey = (e: KeyboardEvent) => {
       if (e.key.toLowerCase() === "k" && (e.metaKey || e.ctrlKey)) {
         e.preventDefault()
+        trackEvent("search_open", { method: "keyboard", surface: "terminal" })
         activateSearchMode()
         return
       }
@@ -446,6 +452,8 @@ export default function BackendTerminalPage() {
 
     if (searchMode) {
       const results = searchContent(line)
+      // query text is never sent, only how many results it produced
+      trackEvent("terminal_command", { command: "search_query", result_count: results.length })
       if (results.length === 0) {
         appendHistory({ type: "output", text: "Fuzzy search results (0): No results." })
       } else {
@@ -462,6 +470,8 @@ export default function BackendTerminalPage() {
     }
 
     const [cmd, ...args] = line.split(/\s+/)
+    // command name only (or "unknown"), never its arguments
+    trackEvent("terminal_command", { command: ALL_COMMANDS.includes(cmd) ? cmd : "unknown" })
 
     if (SECTION_COMMANDS.includes(cmd)) {
       appendHistory({ type: "output", text: renderSection(cmd) })
