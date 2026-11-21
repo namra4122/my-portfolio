@@ -111,19 +111,24 @@ export function searchContent(query: string, source: PortfolioContent = content)
     }
   }
 
-  // Contributions
-  {
-    const block = (source.contributions || []).join(" ")
-    if (block && matches(block)) {
+  // Open-source contributions
+  ; (source.contributions || []).forEach((org) => {
+    const block = [
+      org.name,
+      ...org.contributions.flatMap((c) => [c.title, c.description]),
+      ...(org.technologies || []),
+    ].join(" ")
+    if (matches(block)) {
       results.push({
-        id: "contrib",
-        title: "Contributions",
+        id: `contrib-${org.id}`,
+        title: `Open Source: ${org.name}`,
         section: "contributions",
         snippet: makeSnippet(block, queryWords),
-        href: "#projects",
+        href: "#open-source",
+        meta: { tech: (org.technologies || []).join(", ") },
       })
     }
-  }
+  })
 
   // Blog
   ; (source.blog || []).forEach((b: BlogPost) => {
@@ -134,7 +139,7 @@ export function searchContent(query: string, source: PortfolioContent = content)
         title: `Blog: ${b.title}`,
         section: "blog",
         snippet: makeSnippet(block, queryWords),
-        href: b.url || "#blog",
+        href: b.url,
         meta: { date: b.date },
       })
     }

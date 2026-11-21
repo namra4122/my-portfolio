@@ -5,6 +5,7 @@ import { CommandDialog, CommandEmpty, CommandGroup, CommandInput, CommandItem, C
 import { searchContent, type SearchResult } from "@/lib/search";
 import { Badge } from "@/components/ui/badge";
 import { ExternalLink, Search } from 'lucide-react';
+import { isHttpUrl, openExternal } from "@/lib/url";
 
 type SearchCommandProps = {
   open?: boolean;
@@ -56,20 +57,17 @@ export function SearchCommand(props: SearchCommandProps = { open: false, onOpenC
   }, []);
 
   function goto(res: SearchResult) {
-    if (res.href?.startsWith("http")) {
-      window.open(res.href, "_blank", "noopener,noreferrer");
-      return;
-    }
-    if (res.href) {
-      // anchor on same page
-      const url = new URL(window.location.href);
-      url.hash = res.href.replace("#", "");
-      window.location.hash = url.hash;
-      // smooth scroll to anchor
-      const el = document.getElementById(res.href.replace("#", ""));
-      if (el) el.scrollIntoView({ behavior: "smooth", block: "start" });
+    const href = res.href;
+    if (href?.startsWith("#")) {
+      const id = href.slice(1);
+      history.pushState(null, "", href);
+      document.getElementById(id)?.scrollIntoView({ behavior: "smooth", block: "start" });
+    } else if (href) {
+      // Only http(s)/mailto are ever opened; anything else is ignored.
+      openExternal(href);
     }
     setOpen(false);
+    onOpenChange(false);
   }
 
   const grouped = results.reduce<Record<string, SearchResult[]>>((acc, r) => {
@@ -101,7 +99,7 @@ export function SearchCommand(props: SearchCommandProps = { open: false, onOpenC
                   <div className="flex flex-col gap-1">
                     <div className="flex items-center gap-2">
                       <span className="font-medium">{res.title}</span>
-                      {res.href?.startsWith("http") && <ExternalLink className="h-3.5 w-3.5 text-muted-foreground" />}
+                      {res.href && isHttpUrl(res.href) && <ExternalLink className="h-3.5 w-3.5 text-muted-foreground" />}
                       {res.meta?.tech && <Badge variant="secondary">{res.meta.tech}</Badge>}
                       {res.meta?.date && <Badge variant="outline">{res.meta.date}</Badge>}
                     </div>

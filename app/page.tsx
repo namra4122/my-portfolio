@@ -3,14 +3,14 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
 import { content } from "@/lib/content"
 import { SearchCommand } from "@/components/search-command"
-import { ArrowRight, Github, Linkedin, Mail, MapPin, Phone, Terminal, createLucideIcon } from "lucide-react"
+import { ArrowRight, Github, Linkedin, Mail, MapPin, Terminal, createLucideIcon } from "lucide-react"
 import Link from "next/link"
 import Image from "next/image"
 import { ThemeToggle } from "@/components/theme-toggle"
 import { AnchorLink } from "@/components/anchor-link"
 import { SmoothScrollOnHash } from "@/components/smooth-scroll"
 import { MobileNav } from "@/components/mobile-nav"
-import React from "react"
+import { isHttpUrl } from "@/lib/url"
 
 const XIcon = createLucideIcon("X", [
   [
@@ -44,7 +44,7 @@ function Header() {
         </Link>
         <MobileNav />
         <nav className="hidden items-center gap-5 text-sm sm:flex">
-          <AnchorLink href="https://drive.google.com/file/d/18VrVOGwgkuFtzb998CVaNY_Gk54xQEPw/view" className="text-muted-foreground hover:text-foreground">
+          <AnchorLink href={content.resumeUrl} className="text-muted-foreground hover:text-foreground">
             Resume
           </AnchorLink>
           <AnchorLink href="#experience" className="text-muted-foreground hover:text-foreground">
@@ -72,10 +72,15 @@ function Header() {
   )
 }
 
-function Hero() {
+const socialLinks = [
+  { label: "GitHub", href: content.contact.github, Icon: Github },
+  { label: "LinkedIn", href: content.contact.linkedin, Icon: Linkedin },
+  { label: "Twitter", href: content.contact.twitter, Icon: XIcon },
+].filter((l): l is typeof l & { href: string } => Boolean(l.href))
 
+function Hero() {
   return (
-    <section className="border-b">
+    <section id="about" className="scroll-mt-24 border-b">
       <div className="mx-auto grid max-w-6xl grid-cols-1 items-center gap-8 px-4 py-12 md:grid-cols-2">
         <div>
           <h1 className="text-3xl font-semibold tracking-tight md:text-4xl">{content.fullName}</h1>
@@ -92,52 +97,31 @@ function Hero() {
               </Link>
             </Button>
           </div>
-          <div className="mt-6 flex flex-wrap items-center gap-4 text-sm">
-            {content.contact.phone && (
-              <a
-                href={`tel:${content.contact.phone}`}
-                className="inline-flex items-center gap-2 text-muted-foreground hover:text-foreground"
-              >
-                <Phone className="h-4 w-4" /> {content.contact.phone}
-              </a>
-            )}
+          <div id="contact" className="mt-6 flex scroll-mt-24 flex-wrap items-center gap-4 text-sm">
             {content.contact.location && (
               <span className="inline-flex items-center gap-2 text-muted-foreground">
                 <MapPin className="h-4 w-4" /> {content.contact.location}
               </span>
             )}
-            <a
-              href={content.contact.email || "#"}
-              target="_blank"
-              className="inline-flex items-center gap-2 text-muted-foreground hover:text-foreground"
-              rel="noopener noreferrer"
-            >
-              <Mail className="h-4 w-4" /> Mail
-            </a>
-            <a
-              href={content.contact.github || "#"}
-              target="_blank"
-              className="inline-flex items-center gap-2 text-muted-foreground hover:text-foreground"
-              rel="noopener noreferrer"
-            >
-              <Github className="h-4 w-4" /> GitHub
-            </a>
-            <a
-              href={content.contact.linkedin || "#"}
-              target="_blank"
-              className="inline-flex items-center gap-2 text-muted-foreground hover:text-foreground"
-              rel="noopener noreferrer"
-            >
-              <Linkedin className="h-4 w-4" /> LinkedIn
-            </a>
-            <a
-              href={content.contact.twitter || "#"}
-              target="_blank"
-              className="inline-flex items-center gap-2 text-muted-foreground hover:text-foreground"
-              rel="noopener noreferrer"
-            >
-              <XIcon className="h-4 w-4" /> Twitter
-            </a>
+            {content.contact.email && (
+              <a
+                href={`mailto:${content.contact.email}`}
+                className="inline-flex items-center gap-2 text-muted-foreground hover:text-foreground"
+              >
+                <Mail className="h-4 w-4" /> Mail
+              </a>
+            )}
+            {socialLinks.map(({ label, href, Icon }) => (
+              <a
+                key={label}
+                href={href}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="inline-flex items-center gap-2 text-muted-foreground hover:text-foreground"
+              >
+                <Icon className="h-4 w-4" /> {label}
+              </a>
+            ))}
           </div>
         </div>
         <div className="relative aspect-square overflow-hidden rounded-lg border bg-muted">
@@ -234,32 +218,34 @@ function Sections() {
             <CardTitle>Open Source</CardTitle>
           </CardHeader>
           <CardContent className="space-y-4">
-            <a
-              href="https://github.com/TeamShiksha"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="block rounded-lg border p-4 transition-colors hover:bg-muted/50"
-            >
-              <div className="mb-1 flex items-center justify-between">
-                <h3 className="font-medium">Team.Shiksha</h3>
-                <span className="text-xs text-emerald-700 hover:underline">GitHub →</span>
-              </div>
-              <div className="space-y-3 text-sm text-muted-foreground">
-                <p>
-                  <strong>Multi-tenant Merchandise E-commerce Platform:</strong> Building the Go backend for a community-run e-commerce platform supporting multiple tenants. Designing service boundaries, tenant isolation logic, and API contracts for concurrent store operations.
-                </p>
-                <p>
-                  <strong>Community Website — Contributor Onboarding Module:</strong> Developed a Python-based backend module for the community&apos;s main website to streamline contributor onboarding; built the data models, API endpoints, and onboarding workflow logic to reduce friction for new developers joining the community.
-                </p>
-              </div>
-              <div className="mt-3 flex flex-wrap gap-1.5">
-                {["Go", "Python", "Multi-tenancy", "REST APIs", "DevOps"].map((t) => (
-                  <Badge key={t} variant="outline">
-                    {t}
-                  </Badge>
-                ))}
-              </div>
-            </a>
+            {content.contributions.map((org) => (
+              <a
+                key={org.id}
+                href={org.href}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="block rounded-lg border p-4 transition-colors hover:bg-muted/50"
+              >
+                <div className="mb-1 flex items-center justify-between">
+                  <h3 className="font-medium">{org.name}</h3>
+                  <span className="text-xs text-emerald-700 hover:underline">GitHub →</span>
+                </div>
+                <div className="space-y-3 text-sm text-muted-foreground">
+                  {org.contributions.map((c) => (
+                    <p key={c.title}>
+                      <strong>{c.title}:</strong> {c.description}
+                    </p>
+                  ))}
+                </div>
+                <div className="mt-3 flex flex-wrap gap-1.5">
+                  {org.technologies.map((t) => (
+                    <Badge key={t} variant="outline">
+                      {t}
+                    </Badge>
+                  ))}
+                </div>
+              </a>
+            ))}
           </CardContent>
         </Card>
       </div>
@@ -298,8 +284,7 @@ function Footer() {
               key={l.href}
               href={l.href}
               className="hover:text-foreground"
-              target={l.href.startsWith("http") ? "_blank" : "_self"}
-              rel="noopener noreferrer"
+              {...(isHttpUrl(l.href) ? { target: "_blank", rel: "noopener noreferrer" } : {})}
             >
               {l.label}
             </a>
