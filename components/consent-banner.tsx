@@ -1,6 +1,6 @@
 "use client"
 
-import { useEffect, useState } from "react"
+import { useEffect, useState, useSyncExternalStore } from "react"
 import { Button } from "@/components/ui/button"
 import {
   OPEN_CONSENT_EVENT,
@@ -10,21 +10,27 @@ import {
   type ConsentChoice,
 } from "@/lib/analytics"
 
+// Cookie/gtag state is read on every render; nothing needs to push updates.
+const noopSubscribe = () => () => {}
+
 export function ConsentBanner() {
-  const [open, setOpen] = useState(false)
+  // Server snapshot: "has a choice", so the banner never renders during SSR.
+  const hasChoice = useSyncExternalStore(noopSubscribe, () => readConsent() !== null, () => true)
+  const [dismissed, setDismissed] = useState(false) // closes even if cookies are blocked
+  const [reopened, setReopened] = useState(false)
 
   useEffect(() => {
-    if (readConsent() === null) setOpen(true)
-    const reopen = () => setOpen(true)
+    const reopen = () => setReopened(true)
     window.addEventListener(OPEN_CONSENT_EVENT, reopen)
     return () => window.removeEventListener(OPEN_CONSENT_EVENT, reopen)
   }, [])
 
-  if (!open) return null
+  if (!reopened && (hasChoice || dismissed)) return null
 
   function choose(choice: ConsentChoice) {
     updateConsent(choice)
-    setOpen(false)
+    setDismissed(true)
+    setReopened(false)
   }
 
   return (
@@ -51,8 +57,7 @@ export function ConsentBanner() {
 
 /** Footer link to reopen the banner. Renders nothing when GA isn't loaded. */
 export function ConsentPreferencesButton({ className }: { className?: string }) {
-  const [enabled, setEnabled] = useState(false)
-  useEffect(() => setEnabled(isAnalyticsEnabled()), [])
+  const enabled = useSyncExternalStore(noopSubscribe, isAnalyticsEnabled, () => false)
   if (!enabled) return null
   return (
     <button

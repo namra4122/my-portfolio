@@ -45,14 +45,7 @@ export const metadata: Metadata = {
     siteName: "Namra Maniar Portfolio",
     type: "website",
     locale: "en_US",
-    images: [
-      {
-        url: "/hero_pic_3.png",
-        width: 1200,
-        height: 630,
-        alt: "Namra Maniar - Backend Software Engineer",
-      },
-    ],
+    // images: provided by app/opengraph-image.tsx
   },
   twitter: {
     card: "summary_large_image",
@@ -61,7 +54,7 @@ export const metadata: Metadata = {
     title: "Namra Maniar",
     description:
       "Software engineer focused on backend systems, automation, and security data pipelines.",
-    images: ["/hero_pic_3.png"],
+    // images: provided by app/twitter-image.tsx
   },
   robots: {
     index: true,
@@ -127,7 +120,7 @@ export default function RootLayout({ children }: { children: ReactNode }) {
         <GoogleAnalytics />
         <script
           type="application/ld+json"
-          dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
+          dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd).replace(/</g, "\\u003c") }}
         />
         <a
           href="#main-content"

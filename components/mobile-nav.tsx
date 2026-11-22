@@ -5,9 +5,10 @@ import Link from "next/link"
 import { Menu, Terminal, X } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { AnchorLink } from "@/components/anchor-link"
+import { content } from "@/lib/content"
 
-const navItems: { href: string; label: string; external?: boolean; track?: string }[] = [
-    { href: "/cv.html", label: "Resume", external: false, track: "resume" },
+const navItems: { href: string; label: string; track?: string }[] = [
+    { href: content.resumeUrl, label: "Resume", track: "resume" },
     { href: "#experience", label: "Experience" },
     { href: "#skills", label: "Skills" },
     { href: "#projects", label: "Projects" },
@@ -64,27 +65,14 @@ export function MobileNav() {
                         <ul className="flex flex-col gap-4">
                             {navItems.map((item) => (
                                 <li key={item.href}>
-                                    {item.external ? (
-                                        <a
-                                            href={item.href}
-                                            data-track={item.track}
-                                            className="block py-2 text-lg text-muted-foreground hover:text-foreground"
-                                            target="_blank"
-                                            rel="noopener noreferrer"
-                                            onClick={() => setIsOpen(false)}
-                                        >
-                                            {item.label}
-                                        </a>
-                                    ) : (
-                                        <AnchorLink
-                                            href={item.href}
-                                            data-track={item.track}
-                                            className="block py-2 text-lg text-muted-foreground hover:text-foreground"
-                                            onNavigated={() => setIsOpen(false)}
-                                        >
-                                            {item.label}
-                                        </AnchorLink>
-                                    )}
+                                    <AnchorLink
+                                        href={item.href}
+                                        data-track={item.track}
+                                        className="block py-2 text-lg text-muted-foreground hover:text-foreground"
+                                        onNavigated={() => setIsOpen(false)}
+                                    >
+                                        {item.label}
+                                    </AnchorLink>
                                 </li>
                             ))}
                             <li>
