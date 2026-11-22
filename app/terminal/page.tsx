@@ -1,8 +1,12 @@
 "use client"
 
 import * as React from "react"
+import Link from "next/link"
+import { useRouter } from "next/navigation"
 import { content } from "@/lib/content"
 import { searchContent } from "@/lib/search"
+import { openExternal } from "@/lib/url"
+import { trackEvent } from "@/lib/analytics"
 
 // ── Types ───────────────────────────────────────────────────────────
 type FileNode = {
@@ -25,6 +29,20 @@ type Entry = {
   id: number
   type: EntryType
   text: string
+}
+
+// ── Shared renderers ────────────────────────────────────────────────
+function renderContributions(): string {
+  return (
+    (content.contributions || [])
+      .map(
+        (org, i) =>
+          `${i + 1}. ${org.name} (${org.href})\n` +
+          org.contributions.map((c) => `   - ${c.title}: ${c.description}`).join("\n") +
+          `\n   Tech: ${org.technologies.join(", ")}`,
+      )
+      .join("\n\n") || "No contributions."
+  )
 }
 
 // ── Virtual Filesystem ──────────────────────────────────────────────
@@ -144,10 +162,7 @@ function buildFS(): DirNode {
       "contributions.txt": {
         type: "file",
         name: "contributions.txt",
-        read: () =>
-          (content.contributions || [])
-            .map((c, i) => `${i + 1}. ${c}`)
-            .join("\n\n") || "No contributions.",
+        read: renderContributions,
       },
     },
   }
@@ -231,11 +246,7 @@ function renderSection(section: string): string {
     case "links":
       return (content.links || []).map((l) => `- ${l.label}: ${l.href}`).join("\n") || "No links."
     case "contributions":
-      return (
-        (content.contributions || [])
-          .map((c, i) => `${i + 1}. ${c}`)
-          .join("\n\n") || "No contributions."
-      )
+      return renderContributions()
     default:
       return "Unknown section."
   }
@@ -259,6 +270,18 @@ const BASE_COMMANDS = ["help", "clear", "ls", "l", "cd", "cat", "open", "search"
 const SECTION_COMMANDS = ["about", "projects", "skills", "experience", "contact", "blog", "links", "contributions"]
 const ALL_COMMANDS = [...BASE_COMMANDS, ...SECTION_COMMANDS]
 
+// Terminal section name → element id on the home page.
+const HOME_ANCHORS: Record<string, string> = {
+  about: "about",
+  projects: "projects",
+  skills: "skills",
+  experience: "experience",
+  contact: "contact",
+  links: "contact",
+  contributions: "open-source",
+  "open-source": "open-source",
+}
+
 const SEPARATOR = "───────────────────────────────────────────────────────────────────────────────"
 const HISTORY_MAX_LENGTH = 500
 
@@ -270,6 +293,7 @@ type CommandContext = {
   appendHistory: (entry: Omit<Entry, "id">) => void
   setSearchMode: React.Dispatch<React.SetStateAction<boolean>>
   activateSearchMode: () => void
+  navigate: (href: string) => void
 }
 
 const COMMANDS: Record<string, (args: string[], ctx: CommandContext) => void> = {
@@ -282,7 +306,7 @@ const COMMANDS: Record<string, (args: string[], ctx: CommandContext) => void> = 
         "  cd <section|..>          Change directory (about, projects, skills, contact, blog, links, contributions)\n" +
         "  cat <file>               View file content (e.g., cat about.txt)\n" +
         "  open <url|#section|section>\n" +
-        "                           Open external URL or navigate to Bento section (e.g., open #projects)\n" +
+        "                           Open an http(s)/mailto URL or jump to a home-page section (e.g., open #projects)\n" +
         "  search [query]           Fuzzy search across portfolio (or press Ctrl/Cmd+K)\n" +
         "  clear                    Clear screen\n" +
         "  help                     Show this help\n" +
@@ -304,33 +328,30 @@ const COMMANDS: Record<string, (args: string[], ctx: CommandContext) => void> = 
     const out = [...items, ...files].join("\n") || "."
     appendHistory({ type: "output", text: out })
   },
-  open(args, { appendHistory }) {
+  open(args, { appendHistory, navigate }) {
     if (args.length === 0) {
       appendHistory({ type: "output", text: "Usage: open <url|#section|section>" })
       return
     }
     const rawTarget = args[0]
+    const section = rawTarget.startsWith("#") ? rawTarget.slice(1) : rawTarget
+    const anchor = HOME_ANCHORS[section]
 
-    const targetSection = rawTarget.startsWith("#")
-      ? rawTarget.replace("#", "")
-      : SECTION_COMMANDS.includes(rawTarget)
-        ? rawTarget
-        : null
-
-    if (targetSection) {
-      const hash = `#${targetSection}`
-      appendHistory({ type: "output", text: `Navigating to ${hash}` })
-      try {
-        window.location.hash = hash
-      } catch { }
+    if (anchor) {
+      appendHistory({ type: "output", text: `Navigating to /#${anchor}` })
+      navigate(`/#${anchor}`)
       return
     }
 
-    const url = rawTarget
-    appendHistory({ type: "output", text: `Opening ${url} ...` })
-    try {
-      window.open(url, "_blank", "noopener,noreferrer")
-    } catch { }
+    // Only absolute http(s) and mailto URLs may be opened.
+    if (openExternal(rawTarget)) {
+      appendHistory({ type: "output", text: `Opening ${rawTarget} ...` })
+    } else {
+      appendHistory({
+        type: "output",
+        text: `Error: refusing to open "${rawTarget}". Use an http(s):// or mailto: URL, or a section (${Object.keys(HOME_ANCHORS).join(", ")}).`,
+      })
+    }
   },
   search(args, { appendHistory, activateSearchMode }) {
     const q = args.join(" ")
@@ -393,6 +414,7 @@ export default function BackendTerminalPage() {
   const wrapRef = React.useRef<HTMLDivElement | null>(null)
   const inputRef = React.useRef<HTMLInputElement | null>(null)
   const idRef = React.useRef(1)
+  const router = useRouter()
 
   const appendHistory = React.useCallback((entry: Omit<Entry, "id">) => {
     setHistory((h) => {
@@ -414,9 +436,14 @@ export default function BackendTerminalPage() {
   }, [])
 
   React.useEffect(() => {
+    trackEvent("terminal_open")
+  }, [])
+
+  React.useEffect(() => {
     const onKey = (e: KeyboardEvent) => {
       if (e.key.toLowerCase() === "k" && (e.metaKey || e.ctrlKey)) {
         e.preventDefault()
+        trackEvent("search_open", { method: "keyboard", surface: "terminal" })
         activateSearchMode()
         return
       }
@@ -446,6 +473,8 @@ export default function BackendTerminalPage() {
 
     if (searchMode) {
       const results = searchContent(line)
+      // query text is never sent, only how many results it produced
+      trackEvent("terminal_command", { command: "search_query", result_count: results.length })
       if (results.length === 0) {
         appendHistory({ type: "output", text: "Fuzzy search results (0): No results." })
       } else {
@@ -462,6 +491,8 @@ export default function BackendTerminalPage() {
     }
 
     const [cmd, ...args] = line.split(/\s+/)
+    // command name only (or "unknown"), never its arguments
+    trackEvent("terminal_command", { command: ALL_COMMANDS.includes(cmd) ? cmd : "unknown" })
 
     if (SECTION_COMMANDS.includes(cmd)) {
       appendHistory({ type: "output", text: renderSection(cmd) })
@@ -477,6 +508,7 @@ export default function BackendTerminalPage() {
         appendHistory,
         setSearchMode,
         activateSearchMode,
+        navigate: router.push,
       })
     } else {
       appendHistory({
@@ -575,12 +607,12 @@ export default function BackendTerminalPage() {
         <div className="mb-4 flex items-center justify-between">
           <div className="text-sm text-emerald-300/80">{content.fullName} — Terminal Interface</div>
           <div className="flex items-center gap-2">
-            <a
+            <Link
               href="/"
               className="text-xs text-emerald-300/80 underline decoration-dotted underline-offset-2 hover:text-emerald-200"
             >
               Back to Bento
-            </a>
+            </Link>
           </div>
         </div>
 

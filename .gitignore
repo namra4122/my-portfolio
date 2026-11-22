@@ -4,7 +4,10 @@
 
 # dependencies
 /node_modules
-*.lock
+# bun is the package manager: commit bun.lock, never other lockfiles
+package-lock.json
+yarn.lock
+pnpm-lock.yaml
 
 # next.js
 /.next/
@@ -19,8 +22,9 @@ yarn-debug.log*
 yarn-error.log*
 .pnpm-debug.log*
 
-# env files
+# env files (never commit secrets; .env.example is allowed)
 .env*
+!.env.example
 
 # vercel
 .vercel
@@ -28,3 +32,6 @@ yarn-error.log*
 # typescript
 *.tsbuildinfo
 next-env.d.ts
+# local design inspiration / experiments and tooling (not part of the site)
+/design-explorations/
+/.impeccable/

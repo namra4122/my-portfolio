@@ -13,6 +13,17 @@ export type Experience = {
   period: string
   summary: string
 }
+export type OpenSourceContribution = {
+  title: string
+  description: string
+}
+export type OpenSourceOrg = {
+  id: string
+  name: string
+  href: string
+  technologies: string[]
+  contributions: OpenSourceContribution[]
+}
 export type BlogPost = {
   id: string
   title: string
@@ -23,6 +34,7 @@ export type BlogPost = {
 
 export type PortfolioContent = {
   fullName: string
+  resumeUrl: string
   education: string
   summary: string
   skills: {
@@ -33,11 +45,10 @@ export type PortfolioContent = {
   projects: Project[]
   experience: Experience[]
   learning: string[]
-  contributions: string[]
+  contributions: OpenSourceOrg[]
   links: Link[]
   blog: BlogPost[]
   contact: {
-    phone?: string
     location?: string
     email?: string
     website?: string
@@ -50,6 +61,7 @@ export type PortfolioContent = {
 // Updated shared content derived from the latest CV
 export const content: PortfolioContent = {
   fullName: "Namra Maniar",
+  resumeUrl: "https://drive.google.com/file/d/18VrVOGwgkuFtzb998CVaNY_Gk54xQEPw/view",
   education:
     "Integrated M.Tech in Software Engineering (5-year programme) — Vellore Institute of Technology, Chennai (Sept 2020 – Apr 2025). Coursework: Operating Systems, Computer Networks, Data Structures & Algorithms, Database Design, Software Architecture, Cloud Computing",
   summary:
@@ -118,8 +130,24 @@ export const content: PortfolioContent = {
   ],
   learning: [],
   contributions: [
-    "Team.Shiksha (open-source) — Multi-tenant Merchandise E-commerce Platform: Building the Go backend for a community-run e-commerce platform supporting multiple tenants. Designing service boundaries, tenant isolation logic, and API contracts for concurrent store operations.",
-    "Team.Shiksha (open-source) — Community Website - Contributor Onboarding Module: Developed a Python-based backend module for the community's main website to streamline contributor onboarding; built the data models, API endpoints, and onboarding workflow logic to reduce friction for new developers joining the community.",
+    {
+      id: "team-shiksha",
+      name: "Team.Shiksha",
+      href: "https://github.com/TeamShiksha",
+      technologies: ["Go", "Python", "Multi-tenancy", "REST APIs", "DevOps"],
+      contributions: [
+        {
+          title: "Multi-tenant Merchandise E-commerce Platform",
+          description:
+            "Building the Go backend for a community-run e-commerce platform supporting multiple tenants. Designing service boundaries, tenant isolation logic, and API contracts for concurrent store operations.",
+        },
+        {
+          title: "Community Website — Contributor Onboarding Module",
+          description:
+            "Developed a Python-based backend module for the community's main website to streamline contributor onboarding; built the data models, API endpoints, and onboarding workflow logic to reduce friction for new developers joining the community.",
+        },
+      ],
+    },
   ],
   links: [
     { label: "Mail", href: "mailto:hey@maniarnamra.com" },
@@ -129,7 +157,6 @@ export const content: PortfolioContent = {
   ],
   blog: [],
   contact: {
-    phone: "+91-6353779926",
     location: "Bangalore, India",
     email: "hey@maniarnamra.com",
     website: "https://maniarnamra.com",

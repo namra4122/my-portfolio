@@ -1,12 +1,16 @@
 "use client"
 
 import type * as React from "react"
+import { isHttpUrl } from "@/lib/url"
 
 type AnchorLinkProps = React.PropsWithChildren<{
-  href: string // expects hash like "#projects" or an absolute path with hash like "/#projects"
+  /** A same-page hash like "#projects", or an absolute http(s) URL (opens in a new tab). */
+  href: string
   className?: string
   onNavigated?: () => void
-}>
+}> &
+  // Pass-through attributes (e.g. data-track for analytics). target/rel are derived from href.
+  Omit<React.ComponentPropsWithoutRef<"a">, "href" | "className" | "onClick" | "target" | "rel">
 
 function scrollToId(id: string) {
   const el = document.getElementById(id)
@@ -15,25 +19,33 @@ function scrollToId(id: string) {
   }
 }
 
-export function AnchorLink({ href, className, children, onNavigated }: AnchorLinkProps) {
+export function AnchorLink({ href, className, children, onNavigated, ...rest }: AnchorLinkProps) {
+  if (isHttpUrl(href)) {
+    return (
+      <a
+        {...rest}
+        href={href}
+        className={className}
+        target="_blank"
+        rel="noopener noreferrer"
+        onClick={() => onNavigated?.()}
+      >
+        {children}
+      </a>
+    )
+  }
+
   function handleClick(e: React.MouseEvent<HTMLAnchorElement>) {
-    // Handle same-page hash anchors
-    if (href.startsWith("#")) {
-      e.preventDefault()
-      const id = href.replace("#", "")
-      // Update hash without jumping
-      history.pushState(null, "", href)
-      scrollToId(id)
-      onNavigated?.()
-    } else {
-      // For external links or different pages, allow default navigation
-      // No need to prevent default - let the browser handle the navigation
-      return true
-    }
+    if (!href.startsWith("#")) return
+    e.preventDefault()
+    // Update hash without jumping, then smooth-scroll.
+    history.pushState(null, "", href)
+    scrollToId(href.slice(1))
+    onNavigated?.()
   }
 
   return (
-    <a href={href} className={className} onClick={handleClick} target="_blank">
+    <a {...rest} href={href} className={className} onClick={handleClick}>
       {children}
     </a>
   )
